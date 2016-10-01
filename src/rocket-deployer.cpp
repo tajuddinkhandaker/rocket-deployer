@@ -122,6 +122,11 @@ const std::string& getArgVal(Arguments& arguments, const string& key)
  
 int main(int argc, char* argv[])
 {
+	if(argc == 1)
+	{
+		std::cout << "\nNo argument provided! Exiting ..." << std::endl;
+		return 0;
+	}
 	int ret = -1;
 	Arguments arguments;
 	
