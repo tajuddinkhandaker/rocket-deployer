@@ -1,1 +1,1 @@
-g++ -Wall -g -o rocket-deployer src/rocket-deployer.cpp
+g++ -Wall -g -o bin/rocket-deployer src/rocket-deployer.cpp
