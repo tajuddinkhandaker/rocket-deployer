@@ -65,32 +65,55 @@ const std::string g_c_commands[][3] = {
 	{ "composer dumpautoload", "" }
 };
 
-const std::pair<std::string, std::string> parseArgs(const std::string& argument)
+namespace Rocket
 {
-	const std::size_t ARG_LENGTH = KEY_LENGTH + VALUE_LENGTH + 1;
-	char key[KEY_LENGTH], value[VALUE_LENGTH];
-	
-	if(argument.length() > ARG_LENGTH)
-		return std::make_pair( "", "" );
-			
-	int ret = sscanf(argument.c_str(), "--%[^=]=%s", key, value);
-	if(ret == EOF || !ret)
-		return std::make_pair( "", "" );
-		
-	return std::make_pair(key, value);
-}
-
-const std::string& getArgVal(Arguments& arguments, const string& key) 
-{
-	for(IterArguments it = arguments.begin(); it != arguments.end(); it++)
+	class RocketDeployer
 	{
-		Argument arg = *it;
-		if(arg.first == key)
-		{
-			if(arg.second.empty())
-				throw err_arg_value_empty;
-			return it->second;
-		}
-	}
-	throw err_arg_not_found;
+		public:
+			static const std::pair<std::string, std::string> parseArgument(const std::string& argument)
+			{
+				const std::size_t ARG_LENGTH = KEY_LENGTH + VALUE_LENGTH + 1;
+				char key[KEY_LENGTH], value[VALUE_LENGTH];
+				
+				if(argument.length() > ARG_LENGTH)
+					return std::make_pair( "", "" );
+						
+				int ret = sscanf(argument.c_str(), "--%[^=]=%s", key, value);
+				if(ret == EOF || !ret)
+					return std::make_pair( "", "" );
+					
+				return std::make_pair(key, value);
+			}
+
+			static const std::string& getArgVal(Arguments& arguments, const string& key) 
+			{
+				for(IterArguments it = arguments.begin(); it != arguments.end(); it++)
+				{
+					Argument arg = *it;
+					if(arg.first == key)
+					{
+						if(arg.second.empty())
+							throw err_arg_value_empty;
+						return it->second;
+					}
+				}
+				throw err_arg_not_found;
+			}
+
+			static const Arguments parseArguments(int argc, char* argv[])
+			{
+				Arguments arguments;
+				for(int argIndex = 0; argIndex < argc; argIndex++)
+				{
+					Argument arg = RocketDeployer::parseArgument(std::string(argv[argIndex]));
+					if(arg.first.empty())
+					{
+						std::cout << "\nInvalid argument. Please check argument " << argIndex + 1 << std::endl << std::endl;
+						exit (EXIT_FAILURE);
+					}
+					arguments.push_back( arg );
+				}
+				return arguments;
+			}
+	};
 }

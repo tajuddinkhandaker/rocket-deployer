@@ -24,6 +24,8 @@
 // build script: g++ -Wall -g -o rocket-deployer src/rocket-deployer.cpp && ./bin/rocket-deployer
 
 #include "rocket-deployer.h"
+
+using namespace Rocket;
  
 int main(int argc, char* argv[])
 {
@@ -33,25 +35,18 @@ int main(int argc, char* argv[])
 		return 0;
 	}
 	int ret = -1;
-	Arguments arguments;
 	
-	argc-=(argc>0); argv+=(argc>0); // skip program name argv[0] if present
+	argc-=(argc>0);
+	argv+=(argc>0); // skip program name argv[0] if present
+	
 	EXIT_ON_FAILURE(system(NULL), "ROCKET DEPLOYER INITIALIZED", "......Ok");
-
-	for(int argIndex = 0; argIndex < argc; argIndex++)
-	{
-		Argument keyValue = parseArgs(std::string(argv[argIndex]));
-		if(keyValue.first.empty())
-		{
-			std::cout << "\nInvalid argument. Please check argument " << argIndex + 1 << std::endl << std::endl;
-			exit (EXIT_FAILURE);
-		}
-		//std::cout << std::endl << keyValue.first << "=" << keyValue.second << std::endl;
-		arguments.push_back( keyValue );
-	}
+	
+	//RocketDeployer rd;
+	
+	Arguments arguments = RocketDeployer::parseArguments(argc, argv);
 	try
 	{
-		const std::string& value = getArgVal(arguments, "app");
+		const std::string& value = RocketDeployer::getArgVal(arguments, "app");
 		cout << value << endl;
 	}
 	CATCH_ARG_EXCEPTIONS("app");
